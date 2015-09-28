@@ -1,0 +1,22 @@
+{
+	"for": {
+		"title": ["话题1", "话题2"]
+	},
+	"users": [		
+	],
+	"other_users": [
+	],
+	"output": "data/{title}/weibo.{title}",
+	"user_func": "get_tweet_by_title",
+	"user_func_param": {
+		"title": "{{for.title}}",
+		"root_selector": ".WB_cardwrap.S_bg2.clearfix > div[mid]",
+		"s_for_userid": "> div",
+		"start": "2012-10-1-0",
+		"end": "2013-12-31-23"
+	},
+	"max_comment": 100,
+	"page_range": "all",
+	"level": "info",
+	"sleep": "600-900"
+}
