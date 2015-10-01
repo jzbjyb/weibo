@@ -79,6 +79,23 @@ class Utils:
     ]
 
     @staticmethod
+    def open_retry(browser, url, retry):
+        re = 0
+        while True: # retry request
+            try:
+                r = browser.open(url)
+            except Exception as e: 
+                if re >= retry:
+                    if re > 0:
+                        Utils.logger.info('RETRY FAIL %s %d' % (url, re))
+                    raise e
+                re += 1                
+                time.sleep(5)
+                Utils.logger.info('RETRY %s %d times' % (url, re))
+            else:
+                return r
+
+    @staticmethod
     def save_cookies_lwp(cookiejar, filename):
         lwp_cookiejar = cookielib.LWPCookieJar()
         for c in cookiejar:
@@ -108,8 +125,9 @@ class Utils:
 
     @staticmethod
     def get_localtime(year, month, day, hour, minute=0):
-        return datetime.now(tzlocal()).replace(year = year).replace(month = month) \
-            .replace(day = day).replace(hour = hour).replace(minute = minute)
+        #return datetime.now(tzlocal()).replace(year = year).replace(month = month) \
+        #    .replace(day = day).replace(hour = hour).replace(minute = minute)
+        return datetime(year, month, day, hour, minute, 0, 0, tzlocal())
 
     @staticmethod
     def parse_time_text(timetxt):

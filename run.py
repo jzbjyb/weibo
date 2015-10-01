@@ -87,11 +87,12 @@ def loop_page(start, end, task):
                 Utils.sleep(sl[0], sl[1])
             
             start += 1
+    except KeyboardInterrupt, e:
+        sys.exit(1)
     except:
         root_logger.exception('RUN EXCEPTION page %s' % start)
     finally:
         opfile.close()
-
 
 def loop_task(task):
     if len(task['for'].items()) == 0:
@@ -110,9 +111,9 @@ def loop_task(task):
     child_task = copy.deepcopy(task)
     del child_task['for'][cur[0]]
     for v in cur[1]:
-        child_task['user_func_param'][cur[0]] = v
-        loop_task(child_task)
-
+        this_task = copy.deepcopy(child_task)
+        this_task['user_func_param'][cur[0]] = v
+        loop_task(this_task)
 
 if __name__ == '__main__':
     
@@ -120,7 +121,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         task = jsonS.load(file(sys.argv[1]))
     else:
-        task = jsonS.load(file('task.txt'))
+        task = jsonS.load(file('weibo.task'))
     task['level'] = 'debug' if not task.has_key('level') else task['level']
     Utils.task = task
 

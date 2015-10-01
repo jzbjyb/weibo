@@ -96,7 +96,7 @@ class WeiboUser:
 			fout.close()
 			
 			data['pcid'] = pre_login['pcid']
-			data['door'] = raw_input('identifying code >>')
+			data['door'] = raw_input('%s identifying code >>' % username)
 			data['sp'] = self.encrypt_passwd(password, pre_login['pubkey'], pre_login['servertime'], pre_login['nonce'])
 			
 			resp = session.post(
@@ -142,7 +142,7 @@ class WeiboUser:
 		weibo_temp['uface'] = usernode['src']
 		weibo_temp['nickname'] = usernode['alt']
 		weibo_temp['text'] = Utils.get_innerhtml(node.select('p.comment_txt')[0])
-		weibo_temp['time'] = Utils.parse_time(node.select('a[node-type="feed_list_item_date"]')[0]['title']).isoformat()
+		weibo_temp['time'] = Utils.parse_time(node.select('.WB_feed_detail a[node-type="feed_list_item_date"]')[0]['title']).isoformat()
 		# some 'from' don't have rel="nofollow"
 		if len(node.select('a[rel="nofollow"]')) > 0:
 			weibo_temp['device'] = node.select('a[rel="nofollow"]')[0].string
@@ -167,7 +167,7 @@ class WeiboUser:
 				break
 			if cindex > Utils.task['max_comment']:
 				break
-			Utils.sleep(10, 20)
+			Utils.sleep(15, 25)
 		return weibo_temp
 
 	@staticmethod

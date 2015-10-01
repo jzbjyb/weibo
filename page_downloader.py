@@ -4,7 +4,7 @@
 import logging
 import mechanize
 import json
-
+from urllib import quote
 from utils import Utils
 from weibo_parser import WeiboCssParser
 
@@ -29,7 +29,7 @@ class WeiboDonwloader:
         br = mechanize.Browser(history=NoHistory())
         br.set_cookiejar(self.cookies)
         Utils.add_header(br)
-        r = br.open(url)
+        r = Utils.open_retry(br, url, 5)
         html = Utils.ungzip_read(r).decode('raw-unicode-escape')
         commentjson = json.loads(html)
         html = commentjson["data"]["html"].replace('\\r\\n', '').replace("\\n", '').replace("\\t", ' ').decode("string_escape").replace('\/', '/')
@@ -84,7 +84,7 @@ class WeiboDonwloader:
 
     def search_page(self, **keywords):
         url = "http://s.weibo.com/weibo/%s?typeall=1&suball=1&timescope=custom:%s:%s&page=%d" % \
-            (keywords['title'], Utils.format_time(keywords['start']), Utils.format_time(keywords['end']), keywords['page'])
+            (quote(keywords['title']), Utils.format_time(keywords['start']), Utils.format_time(keywords['end']), keywords['page'])
         self.logger.info("DOWNLOAD title %s page %d FROM %s" % (keywords['title'], keywords['page'], url))
         br = mechanize.Browser(history=NoHistory())
         br.set_cookiejar(self.cookies)
