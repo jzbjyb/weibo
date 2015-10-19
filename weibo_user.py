@@ -129,9 +129,9 @@ class WeiboUser:
 	def get_page(htmls):
 		soups = [BeautifulSoup(h, 'html.parser') for h in htmls]
 		for s in soups:
-			ps = s.select('a.page.S_txt1')
+			ps = s.select('a[action-type="feed_list_page_more"]')
 			if len(ps) > 0:
-				return int(ps[0].text[1:2])
+				return int(ps[0].text[1:len(ps[0].text)-2])
 		return None
 
 	@staticmethod
