@@ -95,6 +95,32 @@ def loop_page(start, end, task):
         opfile.close()
 
 def loop_task(task):
+    if not task.has_key('for'):
+        if task['user_func_param'].has_key('page_range'):
+            task['page_range'] = task['user_func_param']['page_range']
+        if task['page_range'] == 'all':
+            loop_page(1, None, task)
+        elif isinstance(task['page_range'], str) and task['page_range'].find('-') != -1:
+            p = [int(ps) for ps in filter(Utils.filter_empty, task['page_range'].split('-'))]
+            if len(p) == 2:
+                loop_page(p[0], p[1], task)
+            elif len(p) == 1:
+                loop_page(p[0], None, task)
+        else:
+            loop_page(task['page_range'], task)
+        return
+
+    child_task = copy.deepcopy(task)
+    del child_task['for']
+    for v in task['for']:
+        this_task = copy.deepcopy(child_task)
+        for_detail = v.items()
+        for fd in for_detail:
+            this_task['user_func_param'][fd[0]] = fd[1]
+        loop_task(this_task)
+
+
+def loop_task2(task):
     if len(task['for'].items()) == 0:
         if task['page_range'] == 'all':
             loop_page(1, None, task)

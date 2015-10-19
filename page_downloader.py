@@ -100,6 +100,7 @@ class WeiboDonwloader:
         si = html.find("{\"pid\":\"pl_weibo_direct\"")
         ei = html.find(")</script>", si)
         jsonblock = html[si:ei].decode("raw-unicode-escape")
+        self.logger.info("LOAD JSON from %d to %d" % (si, ei))
         htmljson = json.loads(jsonblock)
         text = htmljson['html'].replace('\\r\\n', '').replace("\\n", '').replace("\\t", ' ').decode("string_escape").replace('\/', '/')
 

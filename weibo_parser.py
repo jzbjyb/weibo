@@ -22,4 +22,4 @@ class WeiboCssParser:
             self.weibos.extend([map_func(n, cookies, s[1]) for n in s[0]])
 
     def get_weibos(self):
-        return self.weibos, self.end
+        return self.weibos, self.end, 

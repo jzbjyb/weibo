@@ -13,6 +13,7 @@ import binascii
 import time
 import logging
 import cookielib
+from bs4 import BeautifulSoup
 
 from page_downloader import WeiboDonwloader
 from weibo_parser import WeiboCssParser
@@ -125,9 +126,19 @@ class WeiboUser:
 		return cot
 
 	@staticmethod
+	def get_page(htmls):
+		soups = [BeautifulSoup(h, 'html.parser') for h in htmls]
+		for s in soups:
+			ps = s.select('a.page.S_txt1')
+			if len(ps) > 0:
+				return int(ps[0].text[1:2])
+		return None
+
+	@staticmethod
 	def search_map_end(soup):
 		if len(soup.select('.pl_noresult')) > 0:
 			return True
+		#if soup.select('a.page S_txt1')[0].text == u'第一页' 
 		return False
 
 	@staticmethod
@@ -224,4 +235,8 @@ class WeiboUser:
 		wb_down = WeiboDonwloader(self.cookies)
 		html = wb_down.search_page(title = param_dict['title'], page = param_dict['page'], \
 				start = Utils.parse_input_date(param_dict['start']), end = Utils.parse_input_date(param_dict['end']))
+		p = WeiboUser.get_page(html)
+		self.logger.info('GET page %d, current page %s' % (param_dict['page'], str(p)))
+		if p != None and p < param_dict['page']:
+			return [], True
 		return WeiboCssParser(html, self.cookies, param_dict['root_selector'], WeiboUser.search_map, WeiboUser.search_map_end).get_weibos()
